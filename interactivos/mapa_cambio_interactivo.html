@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mapa del cambio — Arquitectura Empresarial</title>
+<style>
+:root {
+  --azul: #002060; --medio: #00387D; --claro: #EEF3FA;
+  --pale: #D9E1EF; --slate: #93AAC9; --gris: #4B5563; --gris-claro: #E5E7EB;
+  --verde: #137333; --verde-bg: #E6F4EA;
+  --ambar: #8A5300; --ambar-bg: #FFF4D6;
+  --rojo: #B3261E; --rojo-bg: #FCE8E6;
+  --coral: #C2622C; --coral-bg: #FBEDE3;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 17px; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #F0F4FB; color: #1a1a2e; line-height: 1.45; }
+button, input, textarea, select { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--medio); outline-offset: 3px; }
+.header :focus-visible { outline-color: #fff; }
+
+.header { background: var(--azul); color: #fff; padding: 18px 24px; }
+.header-in { max-width: 1140px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; }
+.header h1 { font-size: 1.4rem; font-weight: 700; line-height: 1.25; }
+.header p { font-size: .88rem; color: #C9D6EA; margin-top: 4px; max-width: 70ch; }
+.header-acciones { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn-header { background: transparent; border: 2px solid #C9D6EA; color: #fff; border-radius: 8px; padding: 6px 14px; font-size: .85rem; font-weight: 600; cursor: pointer; }
+.btn-header:hover, .btn-header[aria-pressed="true"] { background: var(--medio); }
+
+.wrap { max-width: 1140px; margin: 0 auto; padding: 20px 24px 48px; }
+.modo { font-size: .9rem; color: var(--gris); margin-bottom: 14px; }
+.modo strong { color: var(--azul); }
+
+.tablist { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.tab { flex: 1 1 220px; text-align: left; cursor: pointer; background: #fff; border: 2px solid var(--pale); border-radius: 12px; padding: 10px 16px; color: var(--azul); }
+.tab .tab-num { font-size: .75rem; font-weight: 800; color: var(--gris); letter-spacing: .04em; text-transform: uppercase; }
+.tab .tab-nom { display: block; font-size: 1.05rem; font-weight: 700; }
+.tab:hover { border-color: var(--slate); }
+.tab[aria-selected="true"] { background: var(--azul); border-color: var(--azul); color: #fff; }
+.tab[aria-selected="true"] .tab-num { color: #C9D6EA; }
+
+.panel { background: #fff; border-radius: 14px; box-shadow: 0 2px 16px rgba(0,32,96,.08); padding: 24px 26px 28px; }
+.panel h2 { font-size: 1.4rem; color: var(--azul); line-height: 1.25; }
+.panel h3 { font-size: 1.12rem; color: var(--azul); margin: 22px 0 10px; }
+.intro { font-size: .98rem; color: #333; margin: 8px 0 16px; max-width: 78ch; }
+.instrumento { display: inline-block; background: var(--claro); border: 1px solid var(--pale); color: var(--medio); border-radius: 20px; padding: 2px 12px; font-size: .78rem; font-weight: 700; margin-left: 8px; vertical-align: middle; }
+
+.btn { border-radius: 10px; padding: 9px 18px; font-size: .95rem; font-weight: 700; cursor: pointer; border: 2px solid var(--medio); }
+.btn-primario { background: var(--medio); color: #fff; }
+.btn-primario:hover:not(:disabled) { background: var(--azul); border-color: var(--azul); }
+.btn-secundario { background: #fff; color: var(--medio); }
+.btn-secundario:hover { background: var(--claro); }
+.btn-pequeno { padding: 4px 11px; font-size: .82rem; border-width: 1.5px; border-radius: 8px; }
+.btn-peligro { background: #fff; color: var(--rojo); border-color: var(--rojo); }
+.btn:disabled { background: var(--gris-claro); border-color: #C4C9D1; color: #6B7280; cursor: not-allowed; }
+.fila-botones { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+
+.aviso { font-size: .95rem; border-radius: 10px; padding: 10px 14px; margin-top: 10px; }
+.aviso:empty { display: none; }
+.aviso-bloqueo { background: var(--rojo-bg); border-left: 5px solid var(--rojo); color: #5C1510; }
+.aviso-info { background: var(--claro); border-left: 5px solid var(--medio); color: #1F2F4F; }
+.aviso-ok { background: var(--verde-bg); border-left: 5px solid var(--verde); color: #0B3D1C; }
+.aviso-advertencia { background: var(--ambar-bg); border-left: 5px solid #D69E00; color: #4A2D00; }
+.aviso ul { margin: 4px 0 0 20px; }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; }
+.campo { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.campo.ancho { grid-column: 1 / -1; }
+.campo label, .etiqueta { font-size: .86rem; font-weight: 700; color: var(--azul); }
+.campo .ayuda { font-size: .8rem; color: var(--gris); }
+.campo input, .campo textarea, .campo select { border: 2px solid #B8C4D8; border-radius: 8px; padding: 7px 10px; font-size: .95rem; background: #fff; width: 100%; }
+.campo textarea { resize: vertical; min-height: 2.6em; }
+.campo input:focus, .campo textarea:focus, .campo select:focus { border-color: var(--medio); }
+.campo.obligatorio label::after { content: " *"; color: var(--rojo); }
+.campo.mal input, .campo.mal textarea { border-color: var(--rojo); background: #FFF8F7; }
+.estado-campo { font-size: .82rem; font-weight: 600; min-height: 1.2em; }
+.estado-campo.ok { color: var(--verde); }
+.estado-campo.mal { color: var(--rojo); }
+
+table.t { width: 100%; border-collapse: collapse; font-size: .9rem; }
+table.t th { background: var(--claro); color: var(--azul); text-align: left; padding: 8px 10px; border-bottom: 2px solid var(--pale); font-size: .82rem; text-transform: uppercase; letter-spacing: .03em; }
+table.t td { padding: 8px 10px; border-bottom: 1px solid var(--pale); vertical-align: top; }
+.tabla-scroll { overflow-x: auto; }
+
+.chip { display: inline-block; border-radius: 12px; padding: 1px 9px; font-size: .78rem; font-weight: 700; background: var(--claro); color: var(--medio); border: 1px solid var(--pale); margin: 1px 2px; }
+.chip.coral { background: var(--coral-bg); color: var(--coral); border-color: #F0C9AE; }
+.chip.verde { background: var(--verde-bg); color: var(--verde); border-color: #B7DFC2; }
+.chip.rojo { background: var(--rojo-bg); color: var(--rojo); border-color: #F2B8B3; }
+.chip.ambar { background: var(--ambar-bg); color: var(--ambar); border-color: #F0D78A; }
+
+.salida { background: #F8FAFD; border: 2px dashed var(--slate); border-radius: 10px; padding: 14px 16px; font-size: .92rem; white-space: pre-wrap; max-height: 420px; overflow: auto; }
+.nota-pie { font-size: .8rem; color: var(--gris); margin-top: 24px; border-top: 1px solid var(--pale); padding-top: 12px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+@media (max-width: 760px) {
+  html { font-size: 16px; }
+  .wrap { padding: 16px; }
+  .panel { padding: 18px 16px; }
+  .form-grid { grid-template-columns: 1fr; }
+}
+@media print {
+  .header-acciones, .tablist, .fila-botones, .btn { display: none !important; }
+  body { background: #fff; }
+  .panel { box-shadow: none; }
+}
+
+/* ══════════ S4 · animaciones y recorrido del caso ══════════ */
+.header-acciones .btn-recorrido { background: var(--coral); border-color: var(--coral); }
+.header-acciones .btn-recorrido:hover { background: #A64F22; }
+@keyframes aparecer-pop { from { transform: scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes entrar-arriba { from { transform: translateY(-18px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes sacudir { 10%, 90% { transform: translateX(-2px); } 30%, 70% { transform: translateX(4px); } 50% { transform: translateX(-4px); } }
+@keyframes latir { 50% { box-shadow: 0 0 0 7px rgba(194,98,44,.22); } }
+.pop { animation: aparecer-pop .45s cubic-bezier(.34,1.56,.64,1) both; }
+.entra { animation: entrar-arriba .4s cubic-bezier(.22,.61,.36,1) both; }
+.sacude { animation: sacudir .5s both; }
+.aviso-bloqueo.nuevo { animation: sacudir .5s both; }
+
+/* recorrido: una burbuja fija y el elemento del que habla, resaltado */
+.foco-recorrido { position: relative; z-index: 30; box-shadow: 0 0 0 4px var(--coral), 0 0 0 12px rgba(194,98,44,.18) !important;
+  border-radius: 10px; transition: box-shadow .3s; animation: latir 1.6s ease-in-out infinite; }
+#recorrido { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 40; width: min(640px, calc(100% - 24px));
+  background: var(--azul); color: #fff; border-radius: 14px; padding: 14px 18px 12px; box-shadow: 0 18px 44px rgba(0,20,60,.35); display: none; }
+#recorrido.visible { display: block; animation: entrar-arriba .35s both; }
+#recorrido .rc-paso { font-size: .75rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #F0B48A; }
+#recorrido .rc-txt { font-size: .98rem; line-height: 1.45; margin: 4px 0 10px; }
+#recorrido .rc-barra { height: 4px; background: rgba(255,255,255,.18); border-radius: 2px; overflow: hidden; margin-bottom: 10px; }
+#recorrido .rc-barra span { display: block; height: 100%; background: #F0B48A; width: 0; transition: width .3s; }
+#recorrido .rc-acc { display: flex; gap: 8px; justify-content: flex-end; }
+#recorrido button { background: transparent; border: 1.5px solid rgba(255,255,255,.5); color: #fff; border-radius: 8px; padding: 4px 12px; font-size: .85rem; cursor: pointer; }
+#recorrido button:hover { background: rgba(255,255,255,.14); }
+@media (prefers-reduced-motion: reduce) {
+  .pop, .entra, .sacude, .foco-recorrido, #recorrido.visible, .aviso-bloqueo.nuevo { animation: none !important; }
+  * { transition-duration: .01ms !important; }
+}
+@media print { #recorrido { display: none !important; } }
+
+.rejilla-pi { display: grid; grid-template-columns: 34px 1fr; gap: 6px; }
+.eje-y { writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; font-size: .78rem; font-weight: 800; color: var(--gris); letter-spacing: .05em; text-transform: uppercase; }
+.plano { position: relative; height: 420px; border-left: 2px solid var(--azul); border-bottom: 2px solid var(--azul); background:
+  linear-gradient(to right, transparent 33.2%, var(--pale) 33.2% 33.5%, transparent 33.5% 66.5%, var(--pale) 66.5% 66.8%, transparent 66.8%),
+  linear-gradient(to bottom, transparent 33.2%, var(--pale) 33.2% 33.5%, transparent 33.5% 66.5%, var(--pale) 66.5% 66.8%, transparent 66.8%); }
+.plano .zona { position: absolute; font-size: .72rem; font-weight: 800; color: var(--slate); text-transform: uppercase; letter-spacing: .04em; }
+.eje-x { text-align: center; font-size: .78rem; font-weight: 800; color: var(--gris); letter-spacing: .05em; text-transform: uppercase; grid-column: 2; }
+.punto { position: absolute; display: flex; align-items: center; gap: 6px; font-size: .8rem; font-weight: 700; color: var(--azul); white-space: nowrap; cursor: grab; touch-action: none;
+  transition: left .55s cubic-bezier(.22,.61,.36,1), top .55s cubic-bezier(.22,.61,.36,1); padding: 2px 6px 2px 2px; border-radius: 12px; }
+.punto:focus-visible { outline: 3px solid var(--medio); }
+.punto.arrastra { transition: none; cursor: grabbing; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,.2); z-index: 3; }
+.punto { max-width: 33%; }
+.punto span { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.punto i { width: 16px; height: 16px; border-radius: 50%; flex: none; border: 2px solid #fff; box-shadow: 0 0 0 1.5px currentColor; }
+.punto.ok i { background: var(--verde); color: var(--verde); } .punto.media i { background: #D69E00; color: #D69E00; } .punto.nada i { background: var(--rojo); color: var(--rojo); }
+.leyenda-pi { display: flex; gap: 16px; flex-wrap: wrap; font-size: .8rem; color: var(--gris); margin-top: 8px; }
+.leyenda-pi i { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+.grupo { border: 2px solid var(--pale); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; background: #fff; }
+.grupo-cab { display: flex; gap: 10px; align-items: end; margin-bottom: 8px; }
+.grupo-cab .campo:first-child { flex: 1; }
+.grupo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; }
+.grupo-grid .tres { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.mecanismo { display: grid; grid-template-columns: 1fr 2fr 34px; gap: 8px; margin-bottom: 8px; }
+@media (max-width: 900px) { .grupo-grid, .mecanismo { grid-template-columns: 1fr; } .plano { height: 360px; } }
+</style>
+</head>
+<body>
+<div class="header"><div class="header-in">
+  <div>
+    <h1>Mapa del cambio</h1>
+    <p>Quién pierde qué con la transformación, cuánto poder tiene para frenarla y qué se hace con cada grupo: comunicación y capacitación. Unidad 4 · Formato F-34.</p>
+  </div>
+  <div class="header-acciones">
+    <button class="btn-header btn-recorrido" id="btn-recorrido">▶ Recorrido animado del caso</button>
+    <button class="btn-header" id="btn-caso" aria-pressed="true">Caso Red Salud Andina</button>
+    <button class="btn-header" id="btn-grupo" aria-pressed="false">Empezar con el caso del grupo</button>
+  </div>
+</div></div>
+
+<div class="wrap">
+  <p class="modo" id="modo"></p>
+  <div class="panel">
+    <h2>1 · La historia que la estrategia tiene que responder <span class="instrumento">F-34</span></h2>
+    <p class="intro">La resistencia no es un defecto de la gente: es información sobre lo que el cambio le cuesta a cada grupo. Y si la organización ya vio fallar programas, la estrategia tiene que responder a esa historia.</p>
+    <div class="form-grid" id="sec-historia">
+      <div class="campo"><label for="org">Organización</label><input id="org"/></div>
+      <div class="campo"><label for="modelo">Modelo de cambio y cómo lo adaptan</label><input id="modelo" placeholder="p. ej., Kotter (1996), con…"/></div>
+      <div class="campo"><label for="historia">Cambios anteriores y cómo terminaron</label><textarea id="historia" rows="3"></textarea></div>
+      <div class="campo"><label for="tesis">Qué hará distinto este intento</label><textarea id="tesis" rows="3"></textarea></div>
+    </div>
+
+    <h3>2 · Poder e interés</h3>
+    <p class="intro">Arrastre cada grupo a su lugar (o use las flechas del teclado). El color dice qué tan cubierto está: si tiene comunicación y capacitación, falta una, o no tiene ninguna acción.</p>
+    <div class="rejilla-pi">
+      <div class="eje-y">Poder para frenar el cambio →</div>
+      <div class="plano" id="plano" aria-label="Rejilla de poder e interés"></div>
+      <div class="eje-x">Interés en el cambio (cuánto lo afecta) →</div>
+    </div>
+    <div class="leyenda-pi"><span><i style="background:var(--verde)"></i>comunicación y capacitación</span><span><i style="background:#D69E00"></i>falta una de las dos</span><span><i style="background:var(--rojo)"></i>sin acciones</span></div>
+
+    <h3 id="sec-grupos">3 · Los grupos, uno por uno</h3>
+    <div id="grupos"></div>
+    <div class="fila-botones"><button class="btn btn-secundario" id="btn-agregar">+ Grupo</button></div>
+
+    <h3 id="sec-mecanismos">4 · Contra la fatiga de programa</h3>
+    <p class="intro">Qué mecanismos hacen que este intento no se parezca a los anteriores. Si su organización no tiene esa historia, puede dejar esta parte corta.</p>
+    <div id="mecanismos"></div>
+    <div class="fila-botones"><button class="btn btn-secundario btn-pequeno" id="btn-mecanismo">+ Mecanismo</button></div>
+
+    <h3>5 · Revisión</h3>
+    <div id="revision" aria-live="polite"></div>
+
+    <h3>6 · Texto para el documento</h3>
+    <div class="salida" id="salida"></div>
+    <div class="fila-botones">
+      <button class="btn btn-primario" id="btn-copiar">Copiar texto</button>
+      <button class="btn btn-secundario" onclick="window.print()">Imprimir</button>
+    </div>
+    <p class="nota-pie">Rejilla de poder e interés y modelo de ocho pasos de Kotter (1996). Los grupos y sus frases del ejemplo salen del dossier de Red Salud Andina (§4), una organización simulada. Lo que escribe se guarda solo en este navegador.</p>
+  </div>
+</div>
+
+<script>
+const CASO = {
+ "brechas": [
+  {
+   "cod": "G-N1",
+   "dominio": "Negocio",
+   "asis": "No hay gobierno de arquitectura: el comité de TI decide inversión, no diseño",
+   "tobe": "ARB operando (Unidad 3) y tablero del roadmap",
+   "tipo": "Nuevo",
+   "iniciativa": "N1"
+  },
+  {
+   "cod": "G-N2",
+   "dominio": "Negocio",
+   "asis": "Dos personas conocen HIS-CORE; una sale en el mes 11",
+   "tobe": "Tres personas lo conocen y los contratos de datos están documentados",
+   "tipo": "Transformar",
+   "iniciativa": "K1"
+  },
+  {
+   "cod": "G-N3",
+   "dominio": "Negocio",
+   "asis": "La teleconsulta se agenda aparte y se registra a mano",
+   "tobe": "Atención virtual dentro de la agenda y la historia",
+   "tipo": "Transformar",
+   "iniciativa": "N2, N3"
+  },
+  {
+   "cod": "G-N4",
+   "dominio": "Negocio",
+   "asis": "Cada cliente B2B se conecta con un desarrollo a la medida",
+   "tobe": "Incorporación de clientes B2B por API estándar",
+   "tipo": "Transformar",
+   "iniciativa": "N5"
+  },
+  {
+   "cod": "G-D1",
+   "dominio": "Datos",
+   "asis": "Cuatro maestros de paciente; 6 % de error de conciliación",
+   "tobe": "Índice maestro único; error ≤ 1 %",
+   "tipo": "Nuevo",
+   "iniciativa": "D1, D2"
+  },
+  {
+   "cod": "G-D2",
+   "dominio": "Datos",
+   "asis": "Codificación de procedimientos no homologada entre los dos HIS",
+   "tobe": "Catálogos homologados, los que exige el Resumen Digital de Atención",
+   "tipo": "Nuevo",
+   "iniciativa": "A6"
+  },
+  {
+   "cod": "G-D3",
+   "dominio": "Datos",
+   "asis": "La tarifa se valida a mano y la glosa se mide en una hoja de cálculo",
+   "tobe": "Validación en el origen; indicador de glosa calculado en FACT-SALUD",
+   "tipo": "Transformar",
+   "iniciativa": "D3"
+  },
+  {
+   "cod": "G-D4",
+   "dominio": "Datos",
+   "asis": "El tablero de dirección se alimenta de extracciones nocturnas que discrepan",
+   "tobe": "Visión 360 sobre datos homologados",
+   "tipo": "Nuevo",
+   "iniciativa": "D4"
+  },
+  {
+   "cod": "G-A1",
+   "dominio": "Aplicaciones",
+   "asis": "FACT-SALUD lee tablas de HIS-CORE sin contrato",
+   "tobe": "Interfaz publicada y versionada, con pruebas de contrato",
+   "tipo": "Eliminar",
+   "iniciativa": "A2"
+  },
+  {
+   "cod": "G-A2",
+   "dominio": "Aplicaciones",
+   "asis": "PORTAL-B2B consulta la base de LIS-LAB (excepción de la Unidad 3, vence en el mes 4)",
+   "tobe": "API de resultados sobre el bus",
+   "tipo": "Eliminar",
+   "iniciativa": "A3"
+  },
+  {
+   "cod": "G-A3",
+   "dominio": "Aplicaciones",
+   "asis": "HIS-NORTE no tiene interfaz con LIS-LAB ni con FACT-SALUD",
+   "tobe": "Adaptador de HIS-NORTE sobre el bus",
+   "tipo": "Nuevo",
+   "iniciativa": "D2, A4"
+  },
+  {
+   "cod": "G-A4",
+   "dominio": "Aplicaciones",
+   "asis": "Dos agendas que no se hablan (TELEMED y AGENDA-WEB)",
+   "tobe": "Una agenda maestra",
+   "tipo": "Eliminar",
+   "iniciativa": "N2"
+  },
+  {
+   "cod": "G-A5",
+   "dominio": "Aplicaciones",
+   "asis": "Ningún sistema produce el Resumen Digital de Atención",
+   "tobe": "Servicio único de RDA sobre el índice maestro",
+   "tipo": "Nuevo",
+   "iniciativa": "A5, A6"
+  },
+  {
+   "cod": "G-T1",
+   "dominio": "Tecnología",
+   "asis": "Sin monitoreo de servicio: los incidentes los reporta el usuario",
+   "tobe": "Monitoreo de extremo a extremo de los cuatro flujos críticos",
+   "tipo": "Nuevo",
+   "iniciativa": "T1"
+  },
+  {
+   "cod": "G-T2",
+   "dominio": "Tecnología",
+   "asis": "Plan de recuperación de 2019 nunca probado; urgencias en papel los domingos",
+   "tobe": "Modo degradado probado; plan de recuperación ejecutado una vez al año",
+   "tipo": "Transformar",
+   "iniciativa": "T3"
+  },
+  {
+   "cod": "G-T3",
+   "dominio": "Tecnología",
+   "asis": "Tres servicios en dos nubes, sin lineamiento",
+   "tobe": "Catálogo de nubes aprobadas; el portal del paciente migrado a ellas",
+   "tipo": "Transformar",
+   "iniciativa": "T2"
+  },
+  {
+   "cod": "G-T4",
+   "dominio": "Tecnología",
+   "asis": "No hay sitio alterno",
+   "tobe": "Sitio alterno capaz de asumir la atención crítica",
+   "tipo": "Nuevo",
+   "iniciativa": "T4 (T+2)"
+  }
+ ],
+ "iniciativas": [
+  {
+   "cod": "N1",
+   "nombre": "Poner en marcha el ARB y el tablero del roadmap",
+   "dominio": "Negocio",
+   "hz": "T+0",
+   "ini": 1,
+   "fin": 3,
+   "valor": "Alto",
+   "riesgo": "Bajo",
+   "uc": 2,
+   "uc1": 2,
+   "depende": "—",
+   "apuesta": "Todas",
+   "principio": "Todos",
+   "resultado": "Primer dictamen en ≤ 10 días hábiles",
+   "brecha": "G-N1"
+  },
+  {
+   "cod": "K1",
+   "nombre": "Transferir el conocimiento de HIS-CORE (pareo y contratos de datos documentados)",
+   "dominio": "Negocio",
+   "hz": "T+0",
+   "ini": 1,
+   "fin": 10,
+   "valor": "Alto",
+   "riesgo": "Bajo",
+   "uc": 3,
+   "uc1": 3,
+   "depende": "—",
+   "apuesta": "1",
+   "principio": "P7",
+   "resultado": "Tres personas atienden un cambio en HIS-CORE",
+   "brecha": "G-N2"
+  },
+  {
+   "cod": "N2",
+   "nombre": "Apagar la agenda propia de TELEMED; consumir AGENDA-WEB",
+   "dominio": "Negocio",
+   "hz": "T+0",
+   "ini": 2,
+   "fin": 4,
+   "valor": "Medio",
+   "riesgo": "Bajo",
+   "uc": 1,
+   "uc1": 1,
+   "depende": "—",
+   "apuesta": "3",
+   "principio": "P4",
+   "resultado": "Una sola agenda",
+   "brecha": "G-N3, G-A4"
+  },
+  {
+   "cod": "A2",
+   "nombre": "Contrato de interfaz HIS-CORE → FACT-SALUD, con pruebas de contrato",
+   "dominio": "Aplicaciones",
+   "hz": "T+0",
+   "ini": 1,
+   "fin": 6,
+   "valor": "Alto",
+   "riesgo": "Medio",
+   "uc": 5,
+   "uc1": 5,
+   "depende": "K1",
+   "apuesta": "5",
+   "principio": "P3",
+   "resultado": "Un cambio de esquema ya no detiene la facturación",
+   "brecha": "G-A1"
+  },
+  {
+   "cod": "A3",
+   "nombre": "API de resultados de LIS-LAB sobre el bus; retiro de la consulta directa de PORTAL-B2B",
+   "dominio": "Aplicaciones",
+   "hz": "T+0",
+   "ini": 1,
+   "fin": 4,
+   "valor": "Alto",
+   "riesgo": "Medio",
+   "uc": 4,
+   "uc1": 4,
+   "depende": "—",
+   "apuesta": "4",
+   "principio": "P3",
+   "resultado": "Se aplica la actualización del LIS aplazada",
+   "brecha": "G-A2"
+  },
+  {
+   "cod": "T1",
+   "nombre": "Monitoreo de servicio de extremo a extremo de los cuatro flujos críticos",
+   "dominio": "Tecnología",
+   "hz": "T+0",
+   "ini": 2,
+   "fin": 6,
+   "valor": "Medio",
+   "riesgo": "Bajo",
+   "uc": 3,
+   "uc1": 3,
+   "depende": "—",
+   "apuesta": "Todas",
+   "principio": "P1",
+   "resultado": "El sistema avisa antes que el usuario",
+   "brecha": "G-T1"
+  },
+  {
+   "cod": "D1",
+   "nombre": "Índice maestro de pacientes, fase 1: depuración y producción con HIS-CORE",
+   "dominio": "Datos",
+   "hz": "T+0",
+   "ini": 1,
+   "fin": 8,
+   "valor": "Alto",
+   "riesgo": "Medio",
+   "uc": 8,
+   "uc1": 8,
+   "depende": "N1",
+   "apuesta": "1 y 2",
+   "principio": "P2",
+   "resultado": "Un paciente, una identidad en 18 sedes y la clínica",
+   "brecha": "G-D1"
+  },
+  {
+   "cod": "A5",
+   "nombre": "Resumen Digital de Atención desde HIS-CORE (plazo normativo vencido en abril de 2026)",
+   "dominio": "Aplicaciones",
+   "hz": "T+0",
+   "ini": 1,
+   "fin": 6,
+   "valor": "Alto",
+   "riesgo": "Medio",
+   "uc": 3,
+   "uc1": 3,
+   "depende": "—",
+   "apuesta": "1",
+   "principio": "P6",
+   "resultado": "18 sedes y la clínica salen del incumplimiento",
+   "brecha": "G-A5"
+  },
+  {
+   "cod": "D2",
+   "nombre": "Índice maestro, fase 2: adaptador de HIS-NORTE sobre el bus (outbox); seis sedes integradas",
+   "dominio": "Datos",
+   "hz": "T+1",
+   "ini": 7,
+   "fin": 16,
+   "valor": "Alto",
+   "riesgo": "Alto",
+   "uc": 10,
+   "uc1": 5,
+   "depende": "D1",
+   "apuesta": "1 y 2",
+   "principio": "P2 y P3",
+   "resultado": "El antecedente de una sede del norte aparece en la clínica",
+   "brecha": "G-D1, G-A3"
+  },
+  {
+   "cod": "A6",
+   "nombre": "Resumen Digital de Atención desde HIS-NORTE, con catálogos homologados entre los dos HIS",
+   "dominio": "Aplicaciones",
+   "hz": "T+1",
+   "ini": 7,
+   "fin": 14,
+   "valor": "Alto",
+   "riesgo": "Medio",
+   "uc": 3,
+   "uc1": 3,
+   "depende": "A5, D1",
+   "apuesta": "1",
+   "principio": "P6",
+   "resultado": "Las seis sedes del norte dejan de estar en incumplimiento",
+   "brecha": "G-D2, G-A5"
+  },
+  {
+   "cod": "D3",
+   "nombre": "Calidad del dato en el origen del ciclo de ingresos: tarifa y RIPS validados en FACT-SALUD",
+   "dominio": "Datos",
+   "hz": "T+1",
+   "ini": 7,
+   "fin": 15,
+   "valor": "Alto",
+   "riesgo": "Medio",
+   "uc": 6,
+   "uc1": 4,
+   "depende": "A2",
+   "apuesta": "5",
+   "principio": "P8",
+   "resultado": "Baja la glosa inicial en el mismo año fiscal",
+   "brecha": "G-D3"
+  },
+  {
+   "cod": "A4",
+   "nombre": "Interfaz de órdenes HIS-NORTE → LIS-LAB",
+   "dominio": "Aplicaciones",
+   "hz": "T+1",
+   "ini": 11,
+   "fin": 16,
+   "valor": "Medio",
+   "riesgo": "Medio",
+   "uc": 4,
+   "uc1": 2,
+   "depende": "D2",
+   "apuesta": "4",
+   "principio": "P3",
+   "resultado": "Se acaba la redigitación de órdenes en el laboratorio",
+   "brecha": "G-A3"
+  },
+  {
+   "cod": "N3",
+   "nombre": "Telemedicina integrada: la teleconsulta escribe en la historia y se factura sin digitación",
+   "dominio": "Negocio",
+   "hz": "T+1",
+   "ini": 10,
+   "fin": 18,
+   "valor": "Alto",
+   "riesgo": "Medio",
+   "uc": 5,
+   "uc1": 2,
+   "depende": "N2, D1",
+   "apuesta": "3",
+   "principio": "P4",
+   "resultado": "La teleconsulta deja de registrarse a mano",
+   "brecha": "G-N3"
+  },
+  {
+   "cod": "T2",
+   "nombre": "Lineamiento y catálogo de nubes; migrar el portal del paciente a la nube aprobada",
+   "dominio": "Tecnología",
+   "hz": "T+1",
+   "ini": 7,
+   "fin": 14,
+   "valor": "Medio",
+   "riesgo": "Medio",
+   "uc": 4,
+   "uc1": 2,
+   "depende": "N1",
+   "apuesta": "3",
+   "principio": "P5 y P6",
+   "resultado": "Dos nubes, una sola por lineamiento",
+   "brecha": "G-T3"
+  },
+  {
+   "cod": "T3",
+   "nombre": "Plan de recuperación probado y modo degradado de urgencias",
+   "dominio": "Tecnología",
+   "hz": "T+1",
+   "ini": 7,
+   "fin": 12,
+   "valor": "Alto",
+   "riesgo": "Medio",
+   "uc": 4,
+   "uc1": 2,
+   "depende": "T1",
+   "apuesta": "Todas",
+   "principio": "P1",
+   "resultado": "Urgencias no vuelve al papel en la ventana dominical",
+   "brecha": "G-T2"
+  },
+  {
+   "cod": "N4",
+   "nombre": "Negociar la renovación puente de HIS-NORTE (18 meses, con cláusula de salida)",
+   "dominio": "Negocio",
+   "hz": "T+1",
+   "ini": 9,
+   "fin": 12,
+   "valor": "Alto",
+   "riesgo": "Bajo",
+   "uc": 1,
+   "uc1": 1,
+   "depende": "—",
+   "apuesta": "1",
+   "principio": "—",
+   "resultado": "El contrato deja de fijar la decisión",
+   "brecha": ""
+  },
+  {
+   "cod": "D4",
+   "nombre": "Visión 360 del paciente sobre el índice maestro y los datos homologados",
+   "dominio": "Datos",
+   "hz": "T+2",
+   "ini": 19,
+   "fin": 30,
+   "valor": "Alto",
+   "riesgo": "Medio",
+   "uc": 8,
+   "uc1": 0,
+   "depende": "D2, A5",
+   "apuesta": "2",
+   "principio": "P2",
+   "resultado": "La dirección decide con una sola cifra",
+   "brecha": "G-D4"
+  },
+  {
+   "cod": "N5",
+   "nombre": "Venta B2B repetible: incorporación de clientes por API estándar",
+   "dominio": "Negocio",
+   "hz": "T+2",
+   "ini": 19,
+   "fin": 27,
+   "valor": "Alto",
+   "riesgo": "Medio",
+   "uc": 6,
+   "uc1": 0,
+   "depende": "A3",
+   "apuesta": "4",
+   "principio": "P3",
+   "resultado": "Un cliente B2B nuevo en semanas, no en meses",
+   "brecha": "G-N4"
+  },
+  {
+   "cod": "T4",
+   "nombre": "Sitio alterno para la atención crítica",
+   "dominio": "Tecnología",
+   "hz": "T+2",
+   "ini": 22,
+   "fin": 36,
+   "valor": "Alto",
+   "riesgo": "Alto",
+   "uc": 15,
+   "uc1": 0,
+   "depende": "T3",
+   "apuesta": "Todas",
+   "principio": "P1",
+   "resultado": "La operación sobrevive a la pérdida del centro de datos",
+   "brecha": "G-T4"
+  }
+ ],
+ "diferido": [
+  {
+   "cod": "X1",
+   "nombre": "Sitio alterno completo",
+   "uc": 15,
+   "destino": "T+2 (T4)",
+   "porque": "En el año 1 se prueba el plan de recuperación y el modo degradado (T3), que cubre el riesgo de P1 a una fracción del costo"
+  },
+  {
+   "cod": "X2",
+   "nombre": "Portal y aplicación del paciente unificados",
+   "uc": 10,
+   "destino": "Fuera del roadmap",
+   "porque": "APP-PACIENTE tiene baja adopción (§5); ninguna apuesta lo exige antes de tener identidad única"
+  },
+  {
+   "cod": "X3",
+   "nombre": "Actualizar FACT-SALUD dos versiones",
+   "uc": 8,
+   "destino": "Se revisa en el mes 18",
+   "porque": "D3 pone las validaciones que la glosa necesita sin tocar la personalización; la actualización se decide con la rama A/B"
+  },
+  {
+   "cod": "X4",
+   "nombre": "Plataforma analítica para la visión 360",
+   "uc": 8,
+   "destino": "T+2 (D4)",
+   "porque": "Sin índice maestro, la visión 360 consolidaría cuatro versiones del mismo paciente"
+  },
+  {
+   "cod": "X5",
+   "nombre": "Eliminar la ventana dominical de HIS-CORE",
+   "uc": 5,
+   "destino": "Depende de la decisión A/B",
+   "porque": "Si en el mes 18 se consolida (B), la inversión va al HIS que queda; hacerlo antes puede ser dinero perdido"
+  },
+  {
+   "cod": "X6",
+   "nombre": "Integrar CRM-CC con HIS-CORE",
+   "uc": 4,
+   "destino": "T+2",
+   "porque": "Molesta al agente, pero no produce glosa ni riesgo clínico"
+  }
+ ],
+ "presupuesto": 50,
+ "necesidad": 100,
+ "escalas": {
+  "valor": [
+   [
+    "Alto",
+    "Realiza una apuesta de la estrategia o quita un riesgo que puede detener la operación, la facturación o el cumplimiento normativo"
+   ],
+   [
+    "Medio",
+    "Mejora una capacidad que ya funciona o es condición de otra iniciativa de valor alto"
+   ],
+   [
+    "Bajo",
+    "Mejora deseable que ninguna apuesta exige"
+   ]
+  ],
+  "riesgo": [
+   [
+    "Alto",
+    "Toca la operación asistencial, depende de un tercero no verificado o de conocimiento que hoy tienen una o dos personas"
+   ],
+   [
+    "Medio",
+    "Cambia una integración o un sistema crítico, con alternativa de retorno conocida"
+   ],
+   [
+    "Bajo",
+    "No toca sistemas críticos o es sobre todo organizacional"
+   ]
+  ],
+  "costo": [
+   [
+    "UC",
+    "Unidad de costo relativo: 1 UC es el 1 % de lo que TI estima necesario para el año 1. Se estima por comparación entre iniciativas, no con cotizaciones"
+   ]
+  ]
+ },
+ "hitos": [
+  {
+   "mes": 4,
+   "resultado": "PORTAL-B2B deja de leer la base de LIS-LAB; la actualización aplazada del laboratorio se aplica",
+   "quien": "Gerencia de laboratorio"
+  },
+  {
+   "mes": 6,
+   "resultado": "Un cambio de esquema en HIS-CORE ya no detiene la facturación; 18 sedes y la clínica envían el RDA",
+   "quien": "Dirección financiera"
+  },
+  {
+   "mes": 10,
+   "resultado": "Tres personas atienden HIS-CORE antes de la pensión del mes 11",
+   "quien": "CIO"
+  },
+  {
+   "mes": 12,
+   "resultado": "Un paciente, una identidad en 18 sedes y la clínica; urgencias no vuelve al papel",
+   "quien": "Dirección médica"
+  },
+  {
+   "mes": 18,
+   "resultado": "El antecedente de una sede del norte aparece en la clínica; la glosa baja; decisión A/B",
+   "quien": "Presidencia"
+  },
+  {
+   "mes": 24,
+   "resultado": "Un cliente B2B nuevo se conecta en semanas",
+   "quien": "Gerencia de laboratorio"
+  },
+  {
+   "mes": 30,
+   "resultado": "Visión 360 en el tablero de dirección; en la rama B, HIS-NORTE apagado",
+   "quien": "Presidencia"
+  },
+  {
+   "mes": 36,
+   "resultado": "La atención crítica sobrevive a la pérdida del centro de datos",
+   "quien": "Dirección de operaciones"
+  }
+ ],
+ "restricciones": [
+  {
+   "mes": 0,
+   "hecho": "Plazo del RDA vencido (15 de abril de 2026)",
+   "fuente": "Resolución 1888 de 2025"
+  },
+  {
+   "mes": 4,
+   "hecho": "Vence la excepción de PORTAL-B2B",
+   "fuente": "Dictamen del ARB, Unidad 3"
+  },
+  {
+   "mes": 11,
+   "hecho": "Se pensiona un desarrollador de HIS-CORE",
+   "fuente": "Dossier §6 (s)"
+  },
+  {
+   "mes": 12,
+   "hecho": "Vence el contrato de HIS-NORTE",
+   "fuente": "Dossier §13 (s)"
+  }
+ ],
+ "decision": {
+  "mes": 18,
+  "texto": "En el mes 18 se cumplen los 18 meses de convivencia de los dos HIS que la Unidad 2 fijó como punto de revisión. El ARB presenta al comité de TI la decisión entre mantener la capa de integración (rama A) o consolidar las seis sedes en HIS-CORE y apagar HIS-NORTE (rama B), con los cinco criterios medidos durante T+1. La renovación puente de HIS-NORTE (N4) existe para que el contrato no decida por la organización.",
+  "regla": "Regla: C1, C2 y C3 son condiciones de entrada: si alguna no se cumple, consolidar es trasladar el riesgo, no quitarlo, y se sigue en A con revisión en el mes 30. Si las tres se cumplen, se consolida (B) cuando se cumple C4 o C5.",
+  "criterios": [
+   {
+    "criterio": "C1 · Identidad confiable",
+    "medida": "Error de conciliación del índice maestro en las 24 sedes",
+    "umbral": "≤ 1 %",
+    "fuente": "Informe del índice maestro (D2)"
+   },
+   {
+    "criterio": "C2 · HIS-CORE sin dependencia de dos personas",
+    "medida": "Personas que atienden un cambio en HIS-CORE",
+    "umbral": "≥ 3",
+    "fuente": "Plan de transferencia (K1) y riesgo RA-2 de la Unidad 3"
+   },
+   {
+    "criterio": "C3 · Datos clínicos homologados",
+    "medida": "Procedimientos de HIS-NORTE con código homologado",
+    "umbral": "≥ 95 %",
+    "fuente": "Catálogos del Resumen Digital de Atención (A6)"
+   },
+   {
+    "criterio": "C4 · Convivencia más cara que migrar",
+    "medida": "Costo anual de convivencia frente a costo de migrar repartido en tres años",
+    "umbral": "Convivencia mayor",
+    "fuente": "Registro de deuda de la Unidad 2 (partida «dos sistemas vivos»)"
+   },
+   {
+    "criterio": "C5 · Proveedor de HIS-NORTE",
+    "medida": "Condiciones de una renovación larga",
+    "umbral": "Encarece más de 20 % o no asegura la API (s)",
+    "fuente": "Negociación de N4"
+   }
+  ],
+  "ramas": [
+   {
+    "cod": "A7-B",
+    "rama": "B · Consolidar",
+    "iniciativa": "Migrar las seis sedes a HIS-CORE por oleadas de dos sedes y apagar HIS-NORTE antes del fin de la renovación puente (mes 30)",
+    "meses": "19 a 30",
+    "uc": 20,
+    "valor": "Alto",
+    "riesgo": "Alto"
+   },
+   {
+    "cod": "X5-B",
+    "rama": "B · Consolidar",
+    "iniciativa": "Eliminar la ventana dominical en el HIS que queda",
+    "meses": "28 a 36",
+    "uc": 5,
+    "valor": "Alto",
+    "riesgo": "Medio"
+   },
+   {
+    "cod": "A7-A",
+    "rama": "A · Mantener",
+    "iniciativa": "Renovación larga de HIS-NORTE; la deuda «dos sistemas vivos» se refinancia detrás del adaptador",
+    "meses": "19 a 36",
+    "uc": 6,
+    "valor": "Medio",
+    "riesgo": "Bajo"
+   },
+   {
+    "cod": "X5-A",
+    "rama": "A · Mantener",
+    "iniciativa": "Eliminar la ventana dominical en HIS-CORE; HIS-NORTE depende del proveedor",
+    "meses": "24 a 36",
+    "uc": 5,
+    "valor": "Medio",
+    "riesgo": "Medio"
+   }
+  ]
+ },
+ "cambio": {
+  "tesis": "La organización cerró dos programas sin cumplir su alcance, en 2016 y en 2021. El tercero no puede empezar con un lanzamiento, un nombre y una promesa a tres años. Esta estrategia usa el modelo de ocho pasos de Kotter (1996), pero invierte el orden en un punto: el sentido de urgencia no se construye con un discurso sino con el primer resultado visible del mes 4.",
+  "grupos": [
+   {
+    "grupo": "Presidencia",
+    "pierde": "Que el plan «Andina 2029» parezca incumplido",
+    "resistencia": "Presión por anunciar resultados antes de tenerlos",
+    "poder_interes": "Alto / Alto",
+    "comunicacion": "Informe trimestral de una página con los hitos cumplidos, no con el avance porcentual",
+    "capacitacion": "—",
+    "cuando": "Trimestral",
+    "responsable": "CIO"
+   },
+   {
+    "grupo": "Dirección financiera",
+    "pierde": "Invertir sin retorno en el año fiscal",
+    "resistencia": "Aprobar solo lo que muestra ahorro en 12 meses",
+    "poder_interes": "Alto / Alto",
+    "comunicacion": "Tablero de glosa desde D3; cada tramo se aprueba contra el hito anterior",
+    "capacitacion": "—",
+    "cuando": "Antes de cada tramo",
+    "responsable": "CIO"
+   },
+   {
+    "grupo": "Dirección médica",
+    "pierde": "Interrupciones del acto clínico",
+    "resistencia": "Negar ventanas de corte para las seis sedes",
+    "poder_interes": "Alto / Medio",
+    "comunicacion": "El representante clínico del ARB firma cada ventana; modo degradado probado antes (T3)",
+    "capacitacion": "Simulacro de operación degradada con urgencias",
+    "cuando": "Mes 10 a 12",
+    "responsable": "Representante clínico del ARB"
+   },
+   {
+    "grupo": "Dirección de operaciones",
+    "pierde": "Parar la operación de 24 sedes",
+    "resistencia": "Aplazar oleadas en temporada alta",
+    "poder_interes": "Alto / Alto",
+    "comunicacion": "Calendario de oleadas acordado a 6 meses vista",
+    "capacitacion": "—",
+    "cuando": "Desde el mes 6",
+    "responsable": "Arquitecto líder"
+   },
+   {
+    "grupo": "Líderes de las 6 sedes del norte",
+    "pierde": "Su sistema, su proceso y su autonomía",
+    "resistencia": "«Así lo hacemos aquí y funciona»; datos incompletos en la depuración",
+    "poder_interes": "Medio / Alto",
+    "comunicacion": "Dos líderes del norte en el diseño de la admisión con identidad verificada",
+    "capacitacion": "Admisión con índice maestro: taller por sede, con usuarios clave que capacitan a sus pares",
+    "cuando": "Mes 7 a 16",
+    "responsable": "Dirección de operaciones"
+   },
+   {
+    "grupo": "Personal de admisión y las 2 personas de la carga manual",
+    "pierde": "Su tarea diaria desaparece o cambia",
+    "resistencia": "Seguir conciliando «por si acaso»",
+    "poder_interes": "Bajo / Alto",
+    "comunicacion": "Se dice desde el principio qué pasa con su trabajo: pasan a calidad del dato del ciclo de ingresos",
+    "capacitacion": "Calidad del dato y gestión de glosa en FACT-SALUD",
+    "cuando": "Mes 7 a 15",
+    "responsable": "Dirección financiera"
+   },
+   {
+    "grupo": "Gerencia de laboratorio",
+    "pierde": "Perder velocidad comercial frente al ritmo de la red",
+    "resistencia": "Seguir construyendo por fuera de TI",
+    "poder_interes": "Medio / Alto",
+    "comunicacion": "El primer resultado del roadmap es suyo (mes 4): su actualización deja de estar bloqueada",
+    "capacitacion": "Uso de la API de resultados para su equipo",
+    "cuando": "Mes 1 a 4",
+    "responsable": "Arquitecto líder"
+   },
+   {
+    "grupo": "Desarrolladores de HIS-CORE",
+    "pierde": "Perder el valor de ser los únicos que saben",
+    "resistencia": "Transferencia lenta o incompleta",
+    "poder_interes": "Medio / Medio",
+    "comunicacion": "Reconocimiento explícito: el que se pensiona es el mentor, con un rol nombrado",
+    "capacitacion": "Pareo semanal y documentación de contratos de datos",
+    "cuando": "Mes 1 a 10",
+    "responsable": "Líder de desarrollo"
+   },
+   {
+    "grupo": "Aseguradores",
+    "pierde": "Cambios de formato y plazos",
+    "resistencia": "Rechazar radicaciones durante la transición",
+    "poder_interes": "Alto / Bajo",
+    "comunicacion": "Aviso formal antes de cada cambio en la radicación",
+    "capacitacion": "—",
+    "cuando": "Mes 7 a 15",
+    "responsable": "Dirección financiera"
+   }
+  ],
+  "antifatiga": [
+   {
+    "mecanismo": "No hay «programa»",
+    "distingue": "No se lanza con nombre ni evento. Se anuncia cada resultado cuando ya ocurrió."
+   },
+   {
+    "mecanismo": "Un resultado visible cada seis meses",
+    "distingue": "Cada hito lo comprueba alguien fuera de TI (tabla de hitos)."
+   },
+   {
+    "mecanismo": "Financiación por tramos",
+    "distingue": "Cada tramo se aprueba contra el hito anterior; si un tramo falla, se detiene uno, no el roadmap."
+   },
+   {
+    "mecanismo": "La decisión grande se aplaza a propósito",
+    "distingue": "La consolidación (B) se decide con datos del mes 18, no con la promesa del mes 0."
+   },
+   {
+    "mecanismo": "El ARB gobierna el roadmap",
+    "distingue": "Toda iniciativa pasa por las revisiones R0 a R2 de la Unidad 3; nadie la cambia por fuera."
+   }
+  ]
+ },
+ "indicadores": [
+  {
+   "indicador": "Error de conciliación de identidad",
+   "m0": "6 %",
+   "m6": "≤ 3 % (sedes HIS-CORE)",
+   "m18": "≤ 1 % (24 sedes)",
+   "m36": "≤ 0,5 %",
+   "fuente": "Índice maestro"
+  },
+  {
+   "indicador": "Glosa inicial sobre lo radicado",
+   "m0": "9,4 %",
+   "m6": "9,0 %",
+   "m18": "≤ 6,5 % (s)",
+   "m36": "≤ 4 % (s)",
+   "fuente": "FACT-SALUD (desde D3)"
+  },
+  {
+   "indicador": "Interfaces bajo contrato (M3)",
+   "m0": "11,8 %",
+   "m6": "≥ 18 %",
+   "m18": "≥ 35 %",
+   "m36": "≥ 60 %",
+   "fuente": "Inventario de interfaces"
+  },
+  {
+   "indicador": "Personas que conocen HIS-CORE",
+   "m0": "2",
+   "m6": "2 (3 en el mes 10)",
+   "m18": "3",
+   "m36": "≥ 3",
+   "fuente": "Plan de transferencia"
+  },
+  {
+   "indicador": "Órdenes de laboratorio redigitadas",
+   "m0": "100 % en 6 sedes",
+   "m6": "100 %",
+   "m18": "0 %",
+   "m36": "0 %",
+   "fuente": "LIS-LAB"
+  },
+  {
+   "indicador": "Incidentes detectados por el sistema antes que por el usuario",
+   "m0": "0 % (s)",
+   "m6": "≥ 50 %",
+   "m18": "≥ 80 %",
+   "m36": "≥ 90 %",
+   "fuente": "Mesa de servicio"
+  }
+ ]
+};
+// ═══════════ Utilidades comunes de los interactivos de la S4 (se insertan en cada herramienta) ═══════════
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const num = (x, d = 0) => (+x || 0).toLocaleString("es-CO", { maximumFractionDigits: d });
+const clonar = x => JSON.parse(JSON.stringify(x));
+
+// ---------- estado guardado en el navegador ----------
+function cargarEstado(clave, deCaso, vacio, valido) {
+  let E = null;
+  try { E = JSON.parse(localStorage.getItem(clave)); } catch (e) { E = null; }
+  if (!E || (valido && !valido(E))) E = deCaso();
+  if (new URLSearchParams(location.search).get("caso") === "grupo" && E.modo !== "grupo") E = vacio();
+  return E;
+}
+function guardarEstado(clave, E) { try { localStorage.setItem(clave, JSON.stringify(E)); } catch (e) {} }
+
+// ---------- los dos modos: el caso resuelto y el caso del grupo ----------
+// Volver al caso no borra en silencio lo que el grupo escribió: se pide confirmación.
+function conectarModos({ obtener, poner, deCaso, vacio, tieneDatos }) {
+  $("btn-caso").onclick = () => {
+    const E = obtener();
+    if (E.modo === "grupo" && tieneDatos(E) &&
+        !confirm("Va a reemplazar lo que su grupo escribió por el ejemplo de Red Salud Andina. ¿Continuar?")) return;
+    poner(deCaso());
+  };
+  $("btn-grupo").onclick = () => {
+    const E = obtener();
+    if (E.modo === "grupo" || confirm("Se borrará lo que hay en pantalla para empezar en blanco con el caso de su grupo. ¿Continuar?")) poner(vacio());
+  };
+}
+function pintarModo(modo) {
+  $("btn-caso").setAttribute("aria-pressed", modo === "caso");
+  $("btn-grupo").setAttribute("aria-pressed", modo === "grupo");
+  $("modo").innerHTML = modo === "caso"
+    ? "Está viendo el <strong>ejemplo resuelto de Red Salud Andina</strong>. Modifíquelo para ver cómo cambia la revisión, o empiece con el caso de su grupo."
+    : "Está trabajando con <strong>el caso de su grupo</strong>. Lo que escribe se guarda solo en este navegador.";
+}
+
+// ---------- revisión: bloqueos, advertencias y lo que ya cumple ----------
+let _bloqueosPrevios = -1;
+function pintarRevision(destino, formato, bloqueos, adv, ok) {
+  let h = "";
+  const nuevo = _bloqueosPrevios >= 0 && bloqueos.length > _bloqueosPrevios ? " nuevo" : "";
+  _bloqueosPrevios = bloqueos.length;
+  if (bloqueos.length) h += `<div class="aviso aviso-bloqueo${nuevo}"><strong>El ${formato} todavía no cumple:</strong><ul>${bloqueos.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>`;
+  if (adv.length) h += `<div class="aviso aviso-advertencia"><strong>Revise:</strong><ul>${adv.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>`;
+  if (!bloqueos.length) h += `<div class="aviso aviso-ok"><strong>Cumple lo que pide la rúbrica.</strong> ${esc(ok)}</div>`;
+  $(destino).innerHTML = h;
+}
+
+// ---------- copiar el texto para el documento ----------
+function conectarCopiar(btn, origen) {
+  $(btn).onclick = async () => {
+    const orig = $(btn).textContent;
+    try { await navigator.clipboard.writeText($(origen).textContent); $(btn).textContent = "Copiado ✓"; }
+    catch (e) { $(btn).textContent = "Seleccione el texto y cópielo"; }
+    setTimeout(() => $(btn).textContent = orig, 2000);
+  };
+}
+
+// ---------- recorrido animado del caso ----------
+// Cada paso: { sel, texto, hacer(E) }. Los pasos son acumulativos: ir al paso k es partir del estado
+// inicial y aplicar los pasos 0…k, así que avanzar y retroceder siempre dejan la pantalla coherente.
+// Al salir se restaura lo que había antes de empezar: el recorrido nunca borra el trabajo del grupo.
+function conectarRecorrido({ pasos, inicio, obtener, poner, ms = 3800 }) {
+  const caja = document.createElement("div");
+  caja.id = "recorrido"; caja.setAttribute("role", "dialog"); caja.setAttribute("aria-live", "polite");
+  caja.innerHTML = `<div class="rc-paso" id="rc-paso"></div><div class="rc-txt" id="rc-txt"></div>
+    <div class="rc-barra"><span id="rc-barra"></span></div>
+    <div class="rc-acc"><button id="rc-ant">← Anterior</button><button id="rc-pausa">Pausa</button>
+    <button id="rc-sig">Siguiente →</button><button id="rc-salir">Salir</button></div>`;
+  document.body.appendChild(caja);
+  let k = -1, copia = null, tic = null, foco = null;
+
+  function mostrar(n) {
+    k = n;
+    const E = inicio();
+    for (let i = 0; i <= n; i++) pasos[i].hacer(E, i === n);
+    poner(E, true);
+    if (foco) foco.classList.remove("foco-recorrido");
+    foco = pasos[n].sel ? document.querySelector(pasos[n].sel) : null;
+    if (foco) { foco.classList.add("foco-recorrido"); foco.scrollIntoView({ behavior: "smooth", block: "center" }); }
+    $("rc-paso").textContent = `Recorrido del caso · paso ${n + 1} de ${pasos.length}`;
+    $("rc-txt").innerHTML = pasos[n].texto;
+    $("rc-barra").style.width = ((n + 1) / pasos.length * 100) + "%";
+    $("rc-ant").disabled = n === 0;
+    $("rc-sig").textContent = n === pasos.length - 1 ? "Terminar" : "Siguiente →";
+  }
+  function avanzar() { if (k < pasos.length - 1) mostrar(k + 1); else salir(true); }
+  function reloj(on) {
+    clearInterval(tic); tic = null;
+    if (on && !matchMedia("(prefers-reduced-motion: reduce)").matches) tic = setInterval(avanzar, ms);
+    $("rc-pausa").textContent = tic ? "Pausa" : "Reanudar";
+  }
+  function salir(terminado) {
+    reloj(false); caja.classList.remove("visible");
+    if (foco) foco.classList.remove("foco-recorrido");
+    poner(copia);
+    if (terminado) { $("btn-recorrido").textContent = "▶ Ver el recorrido otra vez"; }
+  }
+  $("btn-recorrido").onclick = () => { copia = clonar(obtener()); caja.classList.add("visible"); mostrar(0); reloj(true); };
+  $("rc-sig").onclick = () => { reloj(false); avanzar(); };
+  $("rc-ant").onclick = () => { reloj(false); if (k > 0) mostrar(k - 1); };
+  $("rc-pausa").onclick = () => reloj(!tic);
+  $("rc-salir").onclick = () => salir(false);
+  addEventListener("keydown", e => { if (e.key === "Escape" && caja.classList.contains("visible")) salir(false); });
+}
+
+const CLAVE = "arem-s4-cambio", NIV = ["Bajo", "Medio", "Alto"];
+const corto = g => { const c = g.split(" y ")[0]; return c.length > 28 ? c.slice(0, 27) + "…" : c; };
+const grupoDe = s => { const [poder, interes] = s.poder_interes.split(" / ");
+  return { grupo: s.grupo, pierde: s.pierde, resistencia: s.resistencia, poder, interes,
+           comunicacion: s.comunicacion, capacitacion: s.capacitacion === "—" ? "" : s.capacitacion, cuando: s.cuando, responsable: s.responsable }; };
+const deCaso = () => ({ modo: "caso", org: "Red Salud Andina",
+  historia: "Dos programas de transformación, en 2016 y 2021, se cerraron sin cumplir su alcance. Hay fatiga de programa y escepticismo interno (dossier §13).",
+  tesis: CASO.cambio.tesis, modelo: "Kotter (1996), con la urgencia construida por el primer resultado visible (mes 4), no por un discurso",
+  grupos: CASO.cambio.grupos.map(grupoDe), mecanismos: clonar(CASO.cambio.antifatiga) });
+const nuevoGrupo = () => ({ grupo: "", pierde: "", resistencia: "", poder: "Medio", interes: "Medio", comunicacion: "", capacitacion: "", cuando: "", responsable: "" });
+const vacio = () => ({ modo: "grupo", org: "", historia: "", tesis: "", modelo: "", grupos: [nuevoGrupo(), nuevoGrupo(), nuevoGrupo(), nuevoGrupo()], mecanismos: [] });
+
+let E = cargarEstado(CLAVE, deCaso, vacio, x => Array.isArray(x.grupos));
+const cobertura = g => g.comunicacion.trim() && g.capacitacion.trim() ? "ok" : (g.comunicacion.trim() || g.capacitacion.trim()) ? "media" : "nada";
+
+// ---------- la rejilla: cada grupo se ubica en su celda, apilado si comparte celda ----------
+function posiciones() {
+  const cuenta = {};
+  return E.grupos.map(g => {
+    const x = NIV.indexOf(g.interes), y = NIV.indexOf(g.poder), k = `${x}${y}`;
+    cuenta[k] = (cuenta[k] || 0) + 1;
+    return { left: (Math.max(0, x) * 33.33 + 1.5) + "%", top: `calc(${(2 - Math.max(0, y)) * 33.33 + 2}% + ${20 + (cuenta[k] - 1) * 26}px)` };
+  });
+}
+function pintarPlano() {
+  const pos = posiciones();
+  let h = `<span class="zona" style="left:1%;top:1%">Mantener satisfecho</span><span class="zona" style="right:1%;top:1%">Gestionar de cerca</span>
+           <span class="zona" style="left:1%;bottom:1%">Monitorear</span><span class="zona" style="right:1%;bottom:1%">Mantener informado</span>`;
+  const existentes = new Map([...$("plano").querySelectorAll(".punto")].map(p => [p.dataset.i, p]));
+  $("plano").innerHTML = h + E.grupos.map((g, i) => `<div class="punto ${cobertura(g)}${existentes.has(String(i)) ? "" : " pop"}" data-i="${i}" tabindex="0"
+      role="button" aria-label="${esc(g.grupo || "Grupo " + (i + 1))}: poder ${g.poder}, interés ${g.interes}. Flechas para mover."
+      style="left:${existentes.get(String(i))?.style.left || pos[i].left};top:${existentes.get(String(i))?.style.top || pos[i].top};animation-delay:${i * 70}ms"
+      title="${esc(g.grupo)} · pierde: ${esc(g.pierde)}"><i></i><span>${esc(corto(g.grupo) || "Grupo " + (i + 1))}</span></div>`).join("");
+  // el punto se pinta donde estaba, se fuerza el reflujo y luego se desliza a su celda nueva
+  void $("plano").offsetHeight;
+  $("plano").querySelectorAll(".punto").forEach((p, i) => { p.style.left = pos[i].left; p.style.top = pos[i].top; });
+}
+let arr = null;
+$("plano").addEventListener("pointerdown", e => {
+  const p = e.target.closest(".punto"); if (!p) return;
+  const r = $("plano").getBoundingClientRect();
+  arr = { p, r, dx: e.clientX - p.getBoundingClientRect().left, dy: e.clientY - p.getBoundingClientRect().top };
+  p.classList.add("arrastra"); p.setPointerCapture(e.pointerId);
+});
+$("plano").addEventListener("pointermove", e => {
+  if (!arr) return;
+  arr.p.style.left = (e.clientX - arr.r.left - arr.dx) + "px"; arr.p.style.top = (e.clientY - arr.r.top - arr.dy) + "px";
+});
+addEventListener("pointerup", e => {
+  if (!arr) return;
+  const { p, r } = arr, g = E.grupos[+p.dataset.i];
+  const fx = (e.clientX - r.left) / r.width, fy = (e.clientY - r.top) / r.height;
+  g.interes = NIV[Math.min(2, Math.max(0, Math.floor(fx * 3)))]; g.poder = NIV[2 - Math.min(2, Math.max(0, Math.floor(fy * 3)))];
+  p.classList.remove("arrastra"); arr = null; pintarGrupos(); actualizar();
+});
+$("plano").addEventListener("keydown", e => {
+  const p = e.target.closest(".punto"); if (!p) return;
+  const g = E.grupos[+p.dataset.i], mv = { ArrowLeft: ["interes", -1], ArrowRight: ["interes", 1], ArrowUp: ["poder", 1], ArrowDown: ["poder", -1] }[e.key];
+  if (!mv) return; e.preventDefault();
+  g[mv[0]] = NIV[Math.min(2, Math.max(0, NIV.indexOf(g[mv[0]]) + mv[1]))];
+  pintarGrupos(); actualizar(); $("plano").querySelector(`.punto[data-i="${p.dataset.i}"]`)?.focus();
+});
+
+// ---------- fichas ----------
+function pintarGrupos() {
+  const sel = (i, k, v) => `<select data-i="${i}" data-k="${k}" id="g${i}-${k}">${NIV.map(n => `<option${v === n ? " selected" : ""}>${n}</option>`).join("")}</select>`;
+  $("grupos").innerHTML = E.grupos.map((g, i) => `<div class="grupo" id="grupo-${i}">
+    <div class="grupo-cab">
+      <div class="campo"><label for="g${i}-grupo">Grupo</label><input id="g${i}-grupo" data-i="${i}" data-k="grupo" value="${esc(g.grupo)}"/></div>
+      <div class="campo"><label for="g${i}-poder">Poder</label>${sel(i, "poder", g.poder)}</div>
+      <div class="campo"><label for="g${i}-interes">Interés</label>${sel(i, "interes", g.interes)}</div>
+      <button class="btn btn-peligro btn-pequeno" data-quitar="${i}" aria-label="Quitar grupo">✕</button></div>
+    <div class="grupo-grid">
+      <div class="campo"><label for="g${i}-pierde">Qué pierde o teme</label><textarea id="g${i}-pierde" rows="2" data-i="${i}" data-k="pierde">${esc(g.pierde)}</textarea></div>
+      <div class="campo"><label for="g${i}-resistencia">Resistencia esperada</label><textarea id="g${i}-resistencia" rows="2" data-i="${i}" data-k="resistencia">${esc(g.resistencia)}</textarea></div>
+      <div class="campo"><label for="g${i}-comunicacion">Comunicación: qué y por qué canal</label><textarea id="g${i}-comunicacion" rows="2" data-i="${i}" data-k="comunicacion">${esc(g.comunicacion)}</textarea></div>
+      <div class="campo"><label for="g${i}-capacitacion">Capacitación: qué y a quién</label><textarea id="g${i}-capacitacion" rows="2" data-i="${i}" data-k="capacitacion">${esc(g.capacitacion)}</textarea></div>
+      <div class="tres"><div class="campo"><label for="g${i}-cuando">Cuándo</label><input id="g${i}-cuando" data-i="${i}" data-k="cuando" value="${esc(g.cuando)}"/></div>
+        <div class="campo"><label for="g${i}-responsable">Responsable</label><input id="g${i}-responsable" data-i="${i}" data-k="responsable" value="${esc(g.responsable)}"/></div></div>
+    </div></div>`).join("");
+}
+function pintarMecanismos() {
+  $("mecanismos").innerHTML = E.mecanismos.map((m, i) => `<div class="mecanismo entra">
+    <div class="campo"><label for="m${i}-a">Mecanismo</label><input id="m${i}-a" data-m="${i}" data-k="mecanismo" value="${esc(m.mecanismo)}"/></div>
+    <div class="campo"><label for="m${i}-b">Qué lo distingue de los intentos anteriores</label><input id="m${i}-b" data-m="${i}" data-k="distingue" value="${esc(m.distingue)}"/></div>
+    <button class="btn btn-peligro btn-pequeno" data-quitarm="${i}" aria-label="Quitar" style="margin-top:22px">✕</button></div>`).join("");
+}
+
+function revisar() {
+  const B = [], A = [];
+  const con = E.grupos.filter(g => g.grupo.trim());
+  E.grupos.forEach((g, i) => {
+    const n = g.grupo.trim() || `El grupo ${i + 1}`;
+    if (!g.grupo.trim()) { if (g.pierde || g.resistencia) B.push(`${n} no tiene nombre.`); return; }
+    if (!g.pierde.trim()) B.push(`${n}: falta qué pierde o teme. Todos pierden algo con un cambio.`);
+    if (!g.resistencia.trim() || /^\s*(ninguna|no hay|no tiene|todos apoyan|apoya|n\/a)/i.test(g.resistencia))
+      B.push(`${n}: «sin resistencia» no es un dato. Si de verdad apoya, diga qué podría hacerle cambiar de opinión.`);
+    if ((g.poder === "Alto" || g.interes === "Alto") && !g.comunicacion.trim()) B.push(`${n} tiene ${g.poder === "Alto" ? "poder" : "interés"} alto y no tiene acción de comunicación.`);
+    if ((g.comunicacion.trim() || g.capacitacion.trim()) && (!g.cuando.trim() || !g.responsable.trim())) B.push(`${n}: la acción no tiene ${!g.cuando.trim() ? "fecha" : "responsable"}.`);
+    if (g.poder === "Alto" && g.interes === "Bajo" && !g.comunicacion.trim()) A.push(`${n}: poco afectado pero con poder; si se entera tarde, puede frenar.`);
+  });
+  if (!E.grupos.some(g => g.capacitacion.trim())) B.push("Ningún grupo tiene capacitación. La rúbrica pide comunicación y capacitación.");
+  if (con.length < 4) A.push(`Hay ${con.length} grupos. ¿Quién más pierde algo con el cambio: los que operan, los que pagan, los que mandan?`);
+  if (!E.historia.trim()) A.push("No hay historia de cambios anteriores. Si la organización tuvo programas fallidos, la estrategia tiene que responderles.");
+  if (!E.tesis.trim()) A.push("Falta la tesis: qué hará distinto este intento.");
+  if (E.historia.trim() && !E.mecanismos.length) A.push("Hay historia de cambios, pero ningún mecanismo contra la fatiga.");
+  pintarRevision("revision", "F-34", B, A, `${con.length} grupos con lo que pierden, su resistencia y acciones de comunicación y capacitación con fecha y responsable.`);
+}
+
+function pintarSalida() {
+  const L = [];
+  L.push(`Estrategia de gestión del cambio — ${E.org || "[organización]"}`);
+  if (E.historia) L.push(`Historia. ${E.historia}`);
+  if (E.tesis) L.push(`Tesis. ${E.tesis}`);
+  if (E.modelo) L.push(`Modelo. ${E.modelo}.`);
+  L.push(""); L.push("Grupos de interés:");
+  E.grupos.filter(g => g.grupo.trim()).forEach(g => {
+    L.push(`• ${g.grupo} (poder ${g.poder.toLowerCase()}, interés ${g.interes.toLowerCase()}). Pierde o teme: ${g.pierde}. Resistencia esperada: ${g.resistencia}.`);
+    L.push(`  Comunicación: ${g.comunicacion || "—"} · Capacitación: ${g.capacitacion || "—"} · Cuándo: ${g.cuando || "—"} · Responsable: ${g.responsable || "—"}`);
+  });
+  if (E.mecanismos.length) { L.push(""); L.push("Contra la fatiga de programa:"); E.mecanismos.forEach(m => L.push(`• ${m.mecanismo}: ${m.distingue}`)); }
+  $("salida").textContent = L.join("\n");
+}
+
+function repintar(temporal) {
+  ["org", "historia", "tesis", "modelo"].forEach(k => $(k).value = E[k] || "");
+  pintarModo(E.modo); pintarGrupos(); pintarMecanismos(); actualizar(temporal);
+}
+function actualizar(temporal) { pintarPlano(); revisar(); pintarSalida(); if (!temporal) guardarEstado(CLAVE, E); }
+
+document.addEventListener("input", e => {
+  const t = e.target;
+  if (["org", "historia", "tesis", "modelo"].includes(t.id)) { E[t.id] = t.value; actualizar(); return; }
+  if (t.dataset.i !== undefined && t.dataset.k) { E.grupos[+t.dataset.i][t.dataset.k] = t.value; actualizar(); }
+  if (t.dataset.m !== undefined) { E.mecanismos[+t.dataset.m][t.dataset.k] = t.value; actualizar(); }
+});
+document.addEventListener("click", e => {
+  const t = e.target;
+  if (t.dataset.quitar !== undefined) { E.grupos.splice(+t.dataset.quitar, 1); $("plano").innerHTML = ""; repintar(); }
+  if (t.dataset.quitarm !== undefined) { E.mecanismos.splice(+t.dataset.quitarm, 1); repintar(); }
+});
+$("btn-agregar").onclick = () => { E.grupos.push(nuevoGrupo()); repintar(); $(`g${E.grupos.length - 1}-grupo`).focus(); };
+$("btn-mecanismo").onclick = () => { E.mecanismos.push({ mecanismo: "", distingue: "" }); repintar(); };
+conectarModos({ obtener: () => E, poner: x => { E = x; $("plano").innerHTML = ""; repintar(); }, deCaso, vacio,
+  tieneDatos: x => x.grupos.some(g => g.grupo.trim()) || !!x.historia.trim() });
+conectarCopiar("btn-copiar", "salida");
+
+// ---------- recorrido animado ----------
+const sinAcciones = g => ({ ...g, comunicacion: "", capacitacion: "", cuando: "", responsable: "" });
+conectarRecorrido({
+  obtener: () => E, poner: (x, temporal) => { E = x; repintar(temporal); },
+  inicio: () => ({ ...vacio(), modo: "caso", org: "Red Salud Andina", grupos: [] }),
+  pasos: [
+    { sel: "#sec-historia", texto: "Se empieza por la historia: <b>dos programas cerrados sin cumplir su alcance</b>, en 2016 y 2021. El tercero no puede lanzarse con un nombre, un evento y una promesa a tres años.",
+      hacer: E => { const c = deCaso(); E.historia = c.historia; E.tesis = c.tesis; E.modelo = c.modelo; } },
+    { sel: "#plano", texto: "Los <b>nueve grupos</b> del dossier, en la rejilla de poder e interés. Todos en rojo: todavía no hay ninguna acción.",
+      hacer: E => { E.grupos = deCaso().grupos.map(g => sinAcciones({ ...g, pierde: "", resistencia: "" })); } },
+    { sel: "#sec-grupos", texto: "Qué <b>pierde o teme</b> cada uno, y qué resistencia se espera. La dirección médica teme por el acto clínico; los líderes del norte, por su sistema y su autonomía.",
+      hacer: E => { E.grupos = deCaso().grupos.map(sinAcciones); } },
+    { sel: "#plano", texto: "Las acciones de <b>comunicación y capacitación</b>, con fecha y responsable. Los puntos pasan a verde; los que solo necesitan información quedan en ámbar.",
+      hacer: E => { E.grupos = deCaso().grupos; } },
+    { sel: "#revision", texto: "El error más común: escribir que un grupo «apoya el cambio». Para quien pierde su tarea diaria, eso no es un dato. <b>La revisión lo bloquea.</b>",
+      hacer: E => { const g = E.grupos.find(x => /admisión/.test(x.grupo)); g.resistencia = "Ninguna, todos apoyan el cambio"; } },
+    { sel: "#grupo-5", texto: "Corregido: su resistencia real es seguir conciliando «por si acaso». Por eso la acción dice desde el principio <b>qué pasa con su trabajo</b>: pasan a calidad del dato.",
+      hacer: E => { E.grupos = deCaso().grupos; } },
+    { sel: "#sec-mecanismos", texto: "Y los <b>mecanismos contra la fatiga</b>: no hay «programa», un resultado visible cada seis meses, financiación por tramos y la decisión grande aplazada a propósito.",
+      hacer: E => { E.mecanismos = clonar(CASO.cambio.antifatiga); } },
+    { sel: "#revision", texto: "Estrategia completa: cada grupo sabe qué pierde, qué se espera de él y qué se hará con él.", hacer: () => {} }
+  ]
+});
+
+repintar();
+</script>
+</body>
+</html>

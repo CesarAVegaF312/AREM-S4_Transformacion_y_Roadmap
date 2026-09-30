@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AREM S4 — Transformación y Roadmap</title>
+<style>
+:root{--azul:#002060;--medio:#00387D;--claro:#EEF3FA;--pale:#D9E1EF;--slate:#93AAC9;--coral:#C2622C;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:#F0F4FB;color:#1a1a2e;line-height:1.5;}
+.header{background:var(--azul);color:#fff;padding:26px 28px;}
+.header h1{font-size:23px;font-weight:700;}
+.header p{font-size:13.5px;color:var(--slate);margin-top:6px;max-width:70ch;}
+.wrap{max-width:1000px;margin:0 auto;padding:26px 20px 60px;}
+h2{font-size:15px;color:var(--azul);margin:30px 0 4px;letter-spacing:.2px;}
+h2:first-of-type{margin-top:8px;}
+.hint{font-size:13px;color:#5A6B82;margin-bottom:12px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:12px;}
+a.card{display:block;background:#fff;border:1px solid var(--pale);border-left:4px solid var(--medio);
+       border-radius:5px;padding:14px 16px;text-decoration:none;color:inherit;transition:.12s;}
+a.card:hover{border-left-color:var(--coral);box-shadow:0 2px 8px rgba(0,32,96,.09);}
+a.card b{display:block;font-size:14.5px;color:var(--azul);margin-bottom:3px;}
+a.card span{font-size:12.5px;color:#5A6B82;}
+a.card.taller{border-left-color:var(--coral);}
+.doc{background:#fff;border:1px solid var(--pale);border-radius:5px;padding:14px 16px;
+     display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;text-decoration:none;color:inherit;}
+.doc:hover{background:var(--claro);}
+.doc b{font-size:14px;color:var(--azul);}
+.doc span{font-size:12.5px;color:#5A6B82;}
+.tag{font-size:10.5px;font-weight:700;letter-spacing:.4px;background:var(--claro);color:var(--medio);
+     padding:2px 7px;border-radius:3px;text-transform:uppercase;}
+.tag.c{background:#FBEDE3;color:var(--coral);}
+code{font-size:12px;background:var(--claro);padding:1px 5px;border-radius:3px;}
+.stack{display:flex;flex-direction:column;gap:10px;}
+footer{margin-top:34px;padding-top:16px;border-top:1px solid var(--pale);font-size:12px;color:#7C8DA8;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Arquitectura Empresarial · Sesión 4 — Transformación y Roadmap</h1>
+  <p>Unidad 4: Transformación Empresarial y Roadmaps Arquitectónicos. Maestría en Ingeniería de Software,
+     Universidad de La Sabana. TOGAF® Standard, 10.ª edición (fases E y F) · ArchiMate® 3.2.</p>
+</div>
+
+<div class="wrap">
+
+  <h2>1 · La Actividad 4.2: qué se entrega y cómo se ve</h2>
+  <p class="hint">Empiecen aquí. La Actividad 4.2 cierra el curso: una propuesta de transformación en PDF, de máximo 20 páginas más anexos, y una presentación en vivo de 10 minutos. Los formatos F-30 a F-35 no se suben; son el borrador de la propuesta. Carpeta <code>documentos/1_actividad_4_2</code>.</p>
+  <div class="stack">
+    <a class="doc" href="documentos/1_actividad_4_2/AREM_S4_Mapa_Actividad_4_2.pdf">
+      <span class="tag c">Mapa</span><b>Mapa de la Actividad 4.2</b>
+      <span>Lo que pide la actividad en la plataforma y su rúbrica, y de qué formato y qué herramienta sale cada sección de la propuesta.</span></a>
+    <a class="doc" href="documentos/1_actividad_4_2/AREM_S4_Informe_Ejemplo_Actividad_4_2.pdf">
+      <span class="tag c">Ejemplo</span><b>Propuesta de transformación de ejemplo</b>
+      <span>El producto final, con Red Salud Andina: resumen ejecutivo, AS-IS, TO-BE, brechas, roadmap con la mitad del presupuesto, cambio y casos reales. Cada sección explica qué hay que hacer en ella.</span></a>
+    <a class="doc" href="documentos/1_actividad_4_2/AREM_S4_Enunciado_Actividad_4_2.pdf">
+      <span class="tag c">Taller</span><b>Enunciado del taller de la sesión</b>
+      <span>Sus brechas y su primer portafolio: la matriz por dominio y un año 1 que cabe en el presupuesto, con el ejemplo resuelto.</span></a>
+  </div>
+
+  <h2>2 · El caso</h2>
+  <p class="hint">El mismo caso de las unidades anteriores. Para la Unidad 4 importan las secciones 3, 8, 9, 12 y 13. Carpeta <code>documentos/2_caso</code>.</p>
+  <div class="stack">
+    <a class="doc" href="documentos/2_caso/AREM_Caso_Red_Salud_Andina.pdf">
+      <span class="tag">Caso</span><b>Dossier de Red Salud Andina</b>
+      <span>La organización simulada de respaldo: la ambición «Andina 2029», la infraestructura, los datos, los episodios y las restricciones.</span></a>
+  </div>
+
+  <h2>3 · Cómo se hace: formatos, guías y herramientas</h2>
+  <p class="hint">Los formatos se llenan; las guías se consultan. Carpeta <code>documentos/3_como_se_hace</code>.</p>
+  <div class="stack">
+    <a class="doc" href="documentos/3_como_se_hace/AREM_S4_Instrumentos.pdf">
+      <span class="tag c">Se llena</span><b>Instrumentos F-29 a F-37</b>
+      <span>Los nueve formatos de la unidad, con el formato de las unidades anteriores del que parte cada uno y lo que lo invalida.</span></a>
+    <a class="doc" href="documentos/3_como_se_hace/AREM_S4_Guia_Actividad_4_1.pdf">
+      <span class="tag">Guía</span><b>Guía de la Actividad 4.1</b>
+      <span>La ficha sectorial: dónde buscar, cómo verificar un caso antes de citarlo y la normativa que fija el calendario.</span></a>
+    <a class="doc" href="documentos/3_como_se_hace/AREM_S4_Guia_Herramientas_e_Instrumentos.pdf">
+      <span class="tag">Guía</span><b>Cómo usar las herramientas y llenar los formatos</b>
+      <span>Las cuatro herramientas recorridas con Red Salud Andina, y los formatos campo por campo.</span></a>
+  </div>
+
+  <p class="hint" style="margin-top:18px"><b>Herramientas interactivas.</b> Se abren en el navegador; no hay que instalar nada. Las cuatro traen el caso de Red Salud Andina, un botón para empezar en blanco con el caso del grupo y un <b>recorrido animado</b> que construye el ejemplo paso a paso. Las tres primeras comparten los datos.</p>
+  <div class="grid">
+    <a class="card taller" href="interactivos/matriz_brechas_interactivo.html">
+      <b>Matriz de brechas</b>
+      <span>Del AS-IS al TO-BE por dominio, con el tipo de cada brecha y la iniciativa que la cierra. F-32.</span></a>
+    <a class="card taller" href="interactivos/priorizador_portafolio_interactivo.html">
+      <b>Priorizador de portafolio</b>
+      <span>Valor, riesgo y costo por iniciativa, y un año 1 que cabe en el presupuesto. F-33, partes A y B.</span></a>
+    <a class="card" href="interactivos/roadmap_interactivo.html">
+      <b>Constructor de roadmap</b>
+      <span>Las iniciativas en el tiempo, contra las fechas que la organización no controla, con resultados visibles y la decisión abierta. F-33, partes C y D.</span></a>
+    <a class="card" href="interactivos/mapa_cambio_interactivo.html">
+      <b>Mapa del cambio</b>
+      <span>Quién pierde qué, cuánto poder tiene para frenar el cambio y qué se hace con cada grupo. F-34.</span></a>
+  </div>
+
+  <h2>4 · La clase</h2>
+  <p class="hint">Carpeta <code>documentos/4_clase</code>.</p>
+  <div class="stack">
+    <a class="doc" href="presentacion.html">
+      <span class="tag c">Presentación</span><b>Presentación web de la sesión</b>
+      <span>Las 21 diapositivas, con los seis ejemplos guiados animados paso a paso (→ avanza, A reproduce), índice, glosario de códigos y cronómetro del taller. Se abre en el navegador.</span></a>
+    <a class="doc" href="documentos/4_clase/AREM_S4_Deck_Reto_U4.pdf">
+      <span class="tag">Clase</span><b>Deck de la sesión</b>
+      <span>Las mismas 21 diapositivas en PDF, con cada ejemplo en su estado final.</span></a>
+  </div>
+
+  <footer>
+    Material docente de César Augusto Vega Fernández · Licencia MIT ·
+    TOGAF® y ArchiMate® son marcas registradas de The Open Group.
+  </footer>
+
+</div>
+</body>
+</html>
