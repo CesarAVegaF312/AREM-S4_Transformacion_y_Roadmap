@@ -226,8 +226,14 @@ la [guía de la Actividad 4.1](documentos/3_como_se_hace/AREM_S4_Guia_Actividad_
 
 ## Licencia
 
-Publicado bajo la **Licencia MIT** — ver [`LICENSE`](LICENSE).
+Este material se distribuye bajo la licencia [Creative Commons Atribución-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es) — ver [`LICENSE`](LICENSE).
+
+Pueden **usar, adaptar o compartir** este contenido, incluido el código de los interactivos, con fines educativos, siempre que:
+
+1. Se reconozca la autoría del profesor **César Augusto Vega Fernández**.
+2. No se utilice con fines comerciales.
+3. Las obras derivadas se distribuyan bajo la misma licencia.
 
 *Nota: TOGAF® y ArchiMate® son marcas registradas de The Open Group. Este repositorio contiene material
-docente que los explica; la licencia MIT aplica a estos materiales, no a los marcos originales. Red Salud
+docente que los explica; la licencia aplica a estos materiales, no a los marcos originales. Red Salud
 Andina es una organización simulada con fines pedagógicos.*
