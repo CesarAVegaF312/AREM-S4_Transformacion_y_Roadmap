@@ -127,6 +127,67 @@ decisión —qué se comparte y qué no—, el TO-BE se vuelve la lista de deseo
 
 ---
 
+## Saberes del syllabus y radar de la industria
+
+Esta sesión trabaja el saber **«Planeación de Arquitecturas AS-IS y TO-BE y Roadmaps de
+Transformación»** del syllabus del curso. La tabla dice dónde se trabaja cada parte.
+
+| Parte del saber | Dónde se trabaja |
+|---|---|
+| Diagnóstico AS-IS y estado objetivo TO-BE | Paso 1 |
+| Análisis de brechas | Paso 2 y `interactivos/matriz_brechas_interactivo.html` |
+| Priorización por valor, riesgo y costo | Paso 3 y `interactivos/priorizador_portafolio_interactivo.html` |
+| Roadmap T+0, T+1 y T+2 | Paso 4 y `interactivos/roadmap_interactivo.html` |
+| Gestión del cambio y liderazgo arquitectónico | Paso 5 y `interactivos/mapa_cambio_interactivo.html` |
+| Casos sectoriales | Paso 0 y la guía de la Actividad 4.1 |
+| Racionalización del portafolio aplicativo | Radar de esta sesión |
+| Transformación digital y modelo de operación | Guía de la Actividad 4.1 (lente de Weill y Woerner) y radar de esta sesión |
+
+### Radar de la industria
+
+Temas actuales conectados con la unidad. Se comentan al inicio del encuentro sincrónico y **no son
+requisitos adicionales de la actividad**: sirven como lente para la propuesta. Si usan uno, citen la
+fuente.
+
+**Racionalización del portafolio: el modelo TIME.** Antes de agregar sistemas al TO-BE conviene
+decidir qué se hace con los que ya existen. El modelo TIME, difundido por Gartner, cruza el valor de
+negocio de cada aplicación con su calidad técnica y le asigna una de cuatro decisiones: tolerar,
+invertir, migrar o eliminar. En Red Salud Andina, con 41 interfaces registradas y entre 8 y 12 sin
+registrar, la pregunta no es solo qué construir, sino también qué apagar.
+*En la Actividad 4.2:* clasifiquen con TIME el portafolio de aplicaciones del AS-IS. Las aplicaciones
+que salgan en «migrar» o «eliminar» son iniciativas del gap analysis; las que salgan en «tolerar» son
+deuda aceptada, y conviene declararla.
+
+**De proyectos a productos.** Cada vez más organizaciones financian equipos estables por producto o
+por flujo de valor, en lugar de proyectos que terminan y se disuelven (Kersten, 2018). Eso cambia el
+roadmap: una iniciativa de T+1 deja de ser «el proyecto X» y pasa a ser una capacidad que un equipo
+permanente construye y mantiene. La forma de los equipos también importa: Skelton y Pais (2019)
+muestran cómo la estructura de los equipos termina reflejada en la arquitectura, lo que se conoce
+como ley de Conway.
+*En la Actividad 4.2:* en la gestión del cambio, digan si el TO-BE exige cambiar cómo se organizan
+los equipos de TI, y no solo qué sistemas usan.
+*Para leer:* Kersten, M. (2018). *Project to product*. IT Revolution Press. Skelton, M., & Pais, M.
+(2019). *Team topologies*. IT Revolution Press.
+
+**Pilotos de IA que no llegan a producción.** Un patrón frecuente en la adopción de IA es acumular
+pilotos que funcionan en la demostración y nunca pasan a producción, porque nadie resolvió la
+integración con los sistemas reales, el gobierno de los datos ni quién los opera. Es un problema de
+arquitectura y de roadmap, no de modelos.
+*En la Actividad 4.2:* si su roadmap incluye iniciativas de IA, ubiquen en T+0 o T+1 las capacidades
+habilitadoras que necesitan (datos, integración, gobierno) antes que el caso de uso visible. Si uno
+de los casos sectoriales de la 4.1 es una adopción de IA, mejor que sea uno que llegó a producción.
+
+**Modernización de legacy asistida por IA.** Las herramientas de IA están bajando el costo de
+entender y migrar código heredado: documentarlo, explicar reglas de negocio enterradas, traducirlo a
+otro lenguaje. Eso cambia el cálculo entre reescritura y estrangulación gradual que se discute en la
+Unidad 2, pero no elimina el riesgo de fondo: el conocimiento que solo tienen las personas. En el
+caso, dos personas conocen el código de HIS-CORE, y un ajuste en una de sus tablas dejó tres días de
+atenciones sin facturar.
+*En la Actividad 4.2:* si su roadmap incluye modernización, digan qué parte del riesgo reduce la IA y
+qué parte sigue dependiendo de las personas.
+
+---
+
 ## Qué hay en el repositorio
 
 ```text
