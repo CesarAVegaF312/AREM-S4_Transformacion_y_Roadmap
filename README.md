@@ -104,6 +104,10 @@ decisión —qué se comparte y qué no—, el TO-BE se vuelve la lista de deseo
   Priorizador; marca las dependencias al revés y las iniciativas que chocan con una fecha ajena.
 - **Produce:** **F-33, partes C y D** — T+0 (meses 0 a 6), T+1 (6 a 18) y T+2 (18 a 36), un resultado
   visible cada seis meses y, si la hay, la decisión que se deja abierta.
+- **Para ensayar la transición,** el [laboratorio de la consolidación](laboratorio/) lleva las seis
+  sedes del norte de HIS-NORTE a HIS-CORE detrás de una fachada, sede por sede: dependencias,
+  criterios de avance medidos en sombra y lo que impide apagar HIS-NORTE. Es opcional y necesita
+  Docker o GitHub Codespaces.
 - **Va a la propuesta en:** secciones 5.4 a 5.6.
 
 ### Paso 5 · La gestión del cambio
@@ -141,7 +145,8 @@ AREM-S4_Transformacion_y_Roadmap/
 │   ├── 3_como_se_hace/         ← instrumentos F-29 a F-37 y guías
 │   └── 4_clase/                ← deck de la sesión
 ├── interactivos/               ← las cuatro herramientas HTML
-└── fuentes/                    ← los mismos documentos en Word, y el deck en PowerPoint
+├── fuentes/                    ← los mismos documentos en Word, y el deck en PowerPoint
+└── laboratorio/                ← la consolidación de las sedes del norte, ensayada (Docker)
 ```
 
 ### `documentos/` — PDF
@@ -177,6 +182,14 @@ Las cuatro abren con **Red Salud Andina**, tienen el botón **«Empezar con el c
 al salir, la herramienta vuelve a lo que tenían en pantalla. Para abrirlas directamente en blanco, agreguen
 `?caso=grupo` al final de la dirección. El Priorizador y el Constructor de roadmap trabajan sobre el mismo
 portafolio.
+
+### `laboratorio/` — la consolidación, ensayada
+
+La rama B del documento de ejemplo, ejecutada: las seis sedes adquiridas pasan de HIS-NORTE a
+HIS-CORE detrás de una fachada (patrón *Strangler Fig*), sede por sede, con comparación en
+sombra, canario, corte y la verificación antes de apagar HIS-NORTE. Mide el criterio C3 de la
+decisión del mes 18. Requiere Docker Desktop o GitHub Codespaces; los seis experimentos están en
+[`laboratorio/README.md`](laboratorio/README.md).
 
 > Las Sesiones 1, 2 y 3 están en sus propios repositorios:
 > [AREM-S1_Marcos_y_Capacidades](https://github.com/CesarAVegaF312/AREM-S1_Marcos_y_Capacidades-repositorio),
