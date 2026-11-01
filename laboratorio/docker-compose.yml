@@ -1,0 +1,46 @@
+# Laboratorio de la consolidación por estrangulamiento: HIS-NORTE -> HIS-CORE, sede por sede
+#
+#   docker compose up -d --build                         levanta el laboratorio
+#   docker compose run --rm migracion estado             rutas, datos migrados y comparaciones
+#   docker compose run --rm migracion admisiones         las sedes registran admisiones
+#   docker compose run --rm migracion reiniciar          vuelve al estado inicial
+#   docker compose down                                  apaga todo
+
+name: arem-consolidacion
+
+x-servicio: &servicio
+  build: ./servicios
+  image: arem-consolidacion-servicios
+  restart: unless-stopped
+
+services:
+  his-norte:
+    <<: *servicio
+    command: python his_norte.py
+
+  his-core:
+    <<: *servicio
+    command: python his_core.py
+
+  fachada:
+    <<: *servicio
+    command: python fachada.py
+    ports:
+      - "8080:8080"
+    depends_on:
+      - his-norte
+      - his-core
+
+  fact-salud:
+    <<: *servicio
+    command: python extractor_fact.py
+    depends_on:
+      - his-norte
+
+  migracion:
+    <<: *servicio
+    restart: "no"
+    entrypoint: ["python", "migracion.py"]
+    volumes:
+      - ./resultados:/resultados
+    profiles: ["herramientas"]
